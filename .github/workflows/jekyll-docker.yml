@@ -1,8 +1,8 @@
-name: Build and Deploy Jekyll site
+name: Jekyll Site CI & Deployment
 
 on:
   push:
-    branches: [ "main" ]  # Trigger on push to main
+    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
@@ -14,16 +14,17 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v4
 
-    - name: Build Jekyll Site
+    - name: Build the Jekyll Site
       run: |
         docker run \
           -v ${{ github.workspace }}:/srv/jekyll \
           -v ${{ github.workspace }}/_site:/srv/jekyll/_site \
           jekyll/builder:latest /bin/bash -c \
-          "chmod -R 777 /srv/jekyll && bundle install && jekyll build --future"
+          "chmod -R 777 /srv/jekyll && jekyll build --future"
 
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./_site
+
